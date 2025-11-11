@@ -3,6 +3,10 @@ import { supabaseServer } from '@/lib/supabase';
 
 export async function GET(request: NextRequest) {
   try {
+    if (!supabaseServer) {
+      return NextResponse.json({ error: 'Supabase 未配置' }, { status: 500 });
+    }
+
     const { searchParams } = new URL(request.url);
     const post_slug = searchParams.get('post_slug');
 
@@ -31,6 +35,10 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    if (!supabaseServer) {
+      return NextResponse.json({ error: 'Supabase 未配置' }, { status: 500 });
+    }
+
     const body = await request.json();
     const { post_slug, author_name, author_email, content } = body;
 

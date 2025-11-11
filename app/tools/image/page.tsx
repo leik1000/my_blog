@@ -16,9 +16,39 @@ export default function ImageToolPage() {
   const [message, setMessage] = useState('');
   const [history, setHistory] = useState<any[]>([]);
 
-  const checkAuth = useCallback(async () => {
+  const supabaseReady = Boolean(supabaseClient?.auth);
+
+  const loadHistory = useCallback(async () => {
+    if (!supabaseReady) return;
+
     try {
-      const { data: { session }, error } = await supabaseClient.auth.getSession();
+      const client = supabaseClient!;
+
+      const { data } = await client
+        .from('image_jobs')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (data) {
+        setHistory(data);
+      }
+    } catch (err) {
+      console.error('加载历史失败:', err);
+    }
+  }, [supabaseReady]);
+
+  const checkAuth = useCallback(async () => {
+    if (!supabaseReady) {
+      setError('Supabase 未配置，请联系管理员');
+      router.push('/auth/login');
+      return;
+    }
+
+    try {
+      const client = supabaseClient!;
+
+      const { data: { session }, error } = await client.auth.getSession();
       
       if (error) {
         console.error('获取 session 失败:', error);
@@ -39,27 +69,11 @@ export default function ImageToolPage() {
       console.error('checkAuth 错误:', err);
       router.push('/auth/login');
     }
-  }, [router]);
+  }, [router, supabaseReady, loadHistory]);
 
   useEffect(() => {
     checkAuth();
-  }, [checkAuth]);
-
-  const loadHistory = async () => {
-    try {
-      const { data } = await supabaseClient
-        .from('image_jobs')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(10);
-
-      if (data) {
-        setHistory(data);
-      }
-    } catch (err) {
-      console.error('加载历史失败:', err);
-    }
-  };
+  }, [checkAuth, supabaseReady]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,6 +122,10 @@ export default function ImageToolPage() {
       setLoading(false);
     }
   };
+
+  if (!supabaseReady) {
+    return <div className="container mx-auto px-4 py-12">Supabase 配置缺失，请稍后再试</div>;
+  }
 
   if (!user) {
     return <div className="container mx-auto px-4 py-12">加载中...</div>;

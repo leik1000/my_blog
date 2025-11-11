@@ -11,6 +11,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const supabaseReady = Boolean(supabaseClient?.auth);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,7 +19,13 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const { error } = await supabaseClient.auth.signInWithPassword({
+      if (!supabaseReady) {
+        throw new Error('Supabase 未配置');
+      }
+
+      const client = supabaseClient!;
+
+      const { error } = await client.auth.signInWithPassword({
         email,
         password,
       });
@@ -34,6 +41,16 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
+  if (!supabaseReady) {
+    return (
+      <div className="container mx-auto px-4 py-12 max-w-md">
+        <div className="bg-white dark:bg-slate-900 p-8 rounded-lg border dark:border-slate-700 text-center">
+          <p className="text-red-600">Supabase 配置缺失，请稍后再试</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-md">

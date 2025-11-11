@@ -3,6 +3,10 @@ import { supabaseServer } from '@/lib/supabase';
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    if (!supabaseServer) {
+      return NextResponse.json({ error: 'Supabase 未配置' }, { status: 500 });
+    }
+
     const { id } = await params;
 
     // 查询任务状态
@@ -26,6 +30,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    if (!supabaseServer) {
+      return NextResponse.json({ error: 'Supabase 未配置' }, { status: 500 });
+    }
+
     const { id } = await params;
     const body = await request.json();
     const { status, result_url, duration_ms } = body;

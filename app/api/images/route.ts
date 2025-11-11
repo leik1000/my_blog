@@ -3,6 +3,10 @@ import { supabaseServer } from '@/lib/supabase';
 
 export async function GET(request: NextRequest) {
   try {
+    if (!supabaseServer) {
+      return NextResponse.json({ error: 'Supabase 未配置' }, { status: 500 });
+    }
+
     // 获取认证用户
     const { data: { session }, error: sessionError } = await supabaseServer.auth.getSession();
 

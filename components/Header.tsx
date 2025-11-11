@@ -10,10 +10,18 @@ export function Header() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!supabaseClient?.auth) {
+      console.warn('Supabase 客户端未配置，跳过登录检测');
+      setLoading(false);
+      return;
+    }
+
+    const client = supabaseClient!;
+
     // 检查用户登录状态
     const checkUser = async () => {
       try {
-        const { data: { session } } = await supabaseClient.auth.getSession();
+        const { data: { session } } = await client.auth.getSession();
         if (session?.user) {
           setUser(session.user);
         }
@@ -27,7 +35,7 @@ export function Header() {
     checkUser();
 
     // 监听认证状态变化
-    const { data: { subscription } } = supabaseClient.auth.onAuthStateChange((event: any, session: any) => {
+    const { data: { subscription } } = client.auth.onAuthStateChange((event: any, session: any) => {
       if (session?.user) {
         setUser(session.user);
       } else {
@@ -46,6 +54,9 @@ export function Header() {
 
   const handleLogout = async () => {
     try {
+      if (!supabaseClient?.auth) {
+        throw new Error('Supabase 未配置');
+      }
       await supabaseClient.auth.signOut();
       setUser(null);
     } catch (err) {

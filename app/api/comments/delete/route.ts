@@ -3,6 +3,10 @@ import { supabaseServer } from '@/lib/supabase';
 
 export async function DELETE(request: NextRequest) {
   try {
+    if (!supabaseServer) {
+      return NextResponse.json({ error: 'Supabase 未配置' }, { status: 500 });
+    }
+
     // 检查管理员权限
     const { data: { session }, error: sessionError } = await supabaseServer.auth.getSession();
 
