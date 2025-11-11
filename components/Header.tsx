@@ -27,7 +27,7 @@ export function Header() {
     checkUser();
 
     // 监听认证状态变化
-    const { data: { subscription } } = supabaseClient.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabaseClient.auth.onAuthStateChange((event: any, session: any) => {
       if (session?.user) {
         setUser(session.user);
       } else {
