@@ -1,7 +1,7 @@
 # ✨ 个人博客网站 - My Blog
 
 > 一个使用 Next.js 14、Supabase、Tailwind CSS 构建的现代化个人博客平台
-> 
+>
 > 支持文章发布、项目展示、实时评论、用户认证和 AI 生图工具
 
 [![Next.js](https://img.shields.io/badge/Next.js-14.0-black?style=flat-square&logo=next.js)](https://nextjs.org/)
@@ -440,7 +440,8 @@ export const siteConfig = {
 ## 👨‍💻 作者
 
 - **个人博客**: [www.leik1000.xyz](https://www.leik1000.xyz)
-- **GitHub**: [@your-username](https://github.com/your-username)
+- **GitHub**: [leik1000/my_blog](https://github.com/leik1000/my_blog)
+- **邮箱**: 409239349@qq.com
 
 ## 🌟 如果有帮助，请给个 Star！
 

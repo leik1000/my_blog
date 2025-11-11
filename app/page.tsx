@@ -33,7 +33,7 @@ export default function Home() {
           {/* 社交链接 */}
           <div className="flex items-center justify-center gap-4 mb-12">
             <a
-              href="https://github.com"
+              href="https://github.com/leik1000/my_blog"
               target="_blank"
               rel="noopener noreferrer"
               className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg"
@@ -55,7 +55,7 @@ export default function Home() {
               </svg>
             </a>
             <a
-              href="mailto:your-email@example.com"
+              href="mailto:409239349@qq.com"
               className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg"
               title="Email"
             >

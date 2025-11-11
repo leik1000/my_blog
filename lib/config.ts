@@ -4,7 +4,7 @@ export const siteConfig = {
   description: '个人博客 - 分享项目与技术文章',
   author: '博主',
   socials: {
-    github: '',
+    github: 'https://github.com/leik1000/my_blog',
     twitter: '',
   },
   nav: [

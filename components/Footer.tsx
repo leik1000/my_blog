@@ -28,7 +28,7 @@ export function Footer() {
             </p>
             <div className="flex gap-4">
               <a 
-                href="https://github.com" 
+                href="https://github.com/leik1000/my_blog" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-800 hover:bg-blue-500 dark:hover:bg-blue-500 flex items-center justify-center transition-all hover:scale-110 group"
@@ -50,7 +50,7 @@ export function Footer() {
                 </svg>
               </a>
               <a 
-                href="mailto:your-email@example.com"
+                href="mailto:409239349@qq.com"
                 className="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-800 hover:bg-purple-500 dark:hover:bg-purple-500 flex items-center justify-center transition-all hover:scale-110 group"
                 title="Email"
               >
