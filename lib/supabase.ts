@@ -32,21 +32,35 @@ export function getSupabaseServer() {
   return supabaseServerInstance;
 }
 
-// 直接导出，API Route 中使用 - 懒加载防止服务端错误
-export let supabaseServer: any = null;
+// 服务端客户端 - 仅在服务端使用，使用 getter 实现真正的懒加载
+let _supabaseServer: any = null;
 
-if (typeof window === 'undefined' && !supabaseServer) {
-  try {
-    supabaseServer = createClient(supabaseUrl, supabaseServiceRole, {
+export function getSupabaseServerClient() {
+  if (typeof window !== 'undefined') {
+    throw new Error('getSupabaseServerClient() should only be called on the server side');
+  }
+  if (!_supabaseServer) {
+    if (!supabaseUrl || !supabaseServiceRole) {
+      console.warn('Supabase credentials are missing');
+      return null;
+    }
+    _supabaseServer = createClient(supabaseUrl, supabaseServiceRole, {
       auth: {
         autoRefreshToken: false,
         persistSession: false,
       },
       db: { schema: 'public' },
     });
-  } catch (err) {
-    console.error('Failed to create Supabase server client:', err);
   }
+  return _supabaseServer;
 }
+
+// 导出 getter，为了向后兼容保留原有的名称
+export const supabaseServer = (() => {
+  if (typeof window === 'undefined') {
+    return getSupabaseServerClient();
+  }
+  return null;
+})();
 
 export type Database = any; // 可扩展为具体类型
