@@ -12,9 +12,10 @@ export async function generateStaticParams() {
   return projects.map(project => ({ slug: project.slug }));
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   const projectsDir = path.join(process.cwd(), 'content', 'projects');
-  const project = getPostBySlug(params.slug, projectsDir);
+  const project = getPostBySlug(slug, projectsDir);
   if (!project) return {};
   return {
     title: `${project.title} - 项目`,
@@ -27,9 +28,10 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default function ProjectPage({ params }: { params: { slug: string } }) {
+export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   const projectsDir = path.join(process.cwd(), 'content', 'projects');
-  const project = getPostBySlug(params.slug, projectsDir);
+  const project = getPostBySlug(slug, projectsDir);
 
   if (!project) {
     notFound();
