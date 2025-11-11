@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabaseClient } from '@/lib/supabase';
 
@@ -16,11 +16,7 @@ export default function ImageToolPage() {
   const [message, setMessage] = useState('');
   const [history, setHistory] = useState<any[]>([]);
 
-  useEffect(() => {
-    checkAuth();
-  }, [router]);
-
-  const checkAuth = async () => {
+  const checkAuth = useCallback(async () => {
     try {
       const { data: { session }, error } = await supabaseClient.auth.getSession();
       
@@ -43,7 +39,11 @@ export default function ImageToolPage() {
       console.error('checkAuth 错误:', err);
       router.push('/auth/login');
     }
-  };
+  }, [router]);
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
 
   const loadHistory = async () => {
     try {
