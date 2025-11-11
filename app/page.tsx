@@ -1,7 +1,11 @@
+import { getAllPosts } from '@/lib/mdx';
 import { PostCard } from '@/components/PostCard';
 import Link from 'next/link';
 
-export default function Home() {
+export default async function Home() {
+  const posts = getAllPosts();
+  const latestPosts = posts.slice(0, 3);
+
   return (
     <div className="container mx-auto px-4">
       {/* Hero Section */}
@@ -23,8 +27,8 @@ export default function Home() {
           </div>
 
           {/* 标题与简介 */}
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent animate-fade-in">
-            欢迎来到我的博客
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text透明 animate-fade-in">
+            欢迎来到leik1000的博客
           </h1>
           <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-400 mb-8 animate-fade-in-delay">
             分享技术见解 · 记录项目经验 · 探索创新可能
@@ -99,15 +103,25 @@ export default function Home() {
               查看全部 →
             </Link>
           </div>
-          <div className="grid gap-6">
-            <PostCard 
-              title="示例文章" 
-              summary="这是一篇示例文章的摘要"
-              slug="sample-post"
-              date="2025-01-01"
-              tags={['示例']}
-            />
-          </div>
+          {latestPosts.length > 0 ? (
+            <div className="grid gap-6">
+              {latestPosts.map(post => (
+                <PostCard
+                  key={post.slug}
+                  title={post.title}
+                  summary={post.summary}
+                  slug={post.slug}
+                  date={post.date}
+                  tags={post.tags}
+                  cover={post.cover}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 p-10 text-center text-slate-500 dark:text-slate-400">
+              暂无文章，敬请期待。
+            </div>
+          )}
         </section>
 
         <section>

@@ -1,9 +1,11 @@
 import { getPostBySlug, getAllPosts } from '@/lib/mdx';
 import { CommentForm } from '@/components/CommentForm';
 import { CommentList } from '@/components/CommentList';
+import { TableOfContents } from '@/components/TableOfContents';
 import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
+import Markdown from 'markdown-to-jsx';
 
 export const revalidate = 3600; // ISR
 
@@ -95,12 +97,23 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
             )}
 
             {/* 文章内容 */}
-            <article className="prose prose-lg dark:prose-invert max-w-none mb-16">
-              <div className="text-slate-700 dark:text-slate-300 leading-relaxed space-y-6">
-                {post.content.split('\n\n').map((paragraph, index) => (
-                  <p key={index} className="text-lg leading-loose">{paragraph}</p>
-                ))}
-              </div>
+            <article className="prose prose-lg dark:prose-invert max-w-none mb-16 prose-headings:scroll-mt-24">
+              <Markdown
+                options={{
+                  overrides: {
+                    h1: { props: { className: 'text-4xl font-bold mt-8 mb-4' } },
+                    h2: { props: { className: 'text-3xl font-bold mt-8 mb-4' } },
+                    h3: { props: { className: 'text-2xl font-bold mt-6 mb-3' } },
+                    h4: { props: { className: 'text-xl font-bold mt-4 mb-2' } },
+                    p: { props: { className: 'text-lg leading-loose mb-4' } },
+                    ul: { props: { className: 'list-disc pl-6 mb-4' } },
+                    ol: { props: { className: 'list-decimal pl-6 mb-4' } },
+                    code: { props: { className: 'bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded text-sm' } },
+                  }
+                }}
+              >
+                {post.content}
+              </Markdown>
             </article>
 
             {/* 文章底部操作栏 */}
@@ -158,28 +171,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
           {/* 侧边栏 */}
           <aside className="lg:col-span-4 space-y-6">
             {/* 目录 */}
-            <div className="sticky top-24 bg-white dark:bg-slate-900 rounded-2xl border-2 border-slate-200 dark:border-slate-700 p-6">
-              <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
-                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
-                </svg>
-                目录导航
-              </h3>
-              <nav className="space-y-2 text-sm">
-                <a href="#" className="block py-2 px-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 transition">
-                  介绍
-                </a>
-                <a href="#" className="block py-2 px-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 transition pl-6">
-                  技术栈
-                </a>
-                <a href="#" className="block py-2 px-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 transition">
-                  实现细节
-                </a>
-                <a href="#" className="block py-2 px-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 transition">
-                  总结
-                </a>
-              </nav>
-            </div>
+            <TableOfContents />
 
             {/* 作者信息 */}
             <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl p-6 border-2 border-blue-200/50 dark:border-blue-700/50">

@@ -1,0 +1,97 @@
+---
+title: '从 0 到 1：我如何用 Cursor + Next.js + Vercel 搭建个人博客'
+date: '2025-11-11'
+summary: '记录用 Cursor 生成前端、Vercel 一键托管、Spaceship 购域名与解析、Supabase 配置与一系列线上问题排查的全过程实践。'
+tags: ['博客搭建','Next.js','Vercel','Supabase','域名','Tailwind']
+cover: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?q=80&w=1600&auto=format&fit=crop'
+---
+
+> 这是一篇完整的落地实践记录：从用 **Cursor** 生成前端项目，到 **Vercel** 部署与 **Spaceship** 购买域名并完成解析，再到 **Supabase** 作为用户与数据服务，期间踩到的坑与修复方案全部整理在此。
+
+![](https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1600&auto=format&fit=crop)
+
+## 目标与技术栈
+
+- Cursor 辅助生成与改造前端代码（Next.js 15 + React 19）
+- Tailwind CSS 4 进行样式与暗色模式
+- Supabase 处理登录注册、数据库与存储
+- Vercel GitHub 集成自动部署，Spaceship 购买域名并完成 DNS 解析
+
+## 1. 用 Cursor 初始化与开发
+
+- 通过提示词让 Cursor 生成基础博客：主页、文章页、项目页、工具页、登录注册页等。
+- 统一升级依赖：Next 15、React 19、Tailwind 4、TypeScript 5、ESLint 9。
+- Tailwind 4 要点：
+  - PostCSS 插件改为 `@tailwindcss/postcss`
+  - 全局样式使用 `@import "tailwindcss"` 与 `@layer` 组织
+
+![](https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1600&auto=format&fit=crop)
+
+### 常见问题与修复
+
+- PostCSS 插件报错：改用 `@tailwindcss/postcss`
+- 自定义颜色 `primary-*` 无效：改为使用内置 `blue-*`
+- `moduleResolution` 报错：`tsconfig.json` 设为 `bundler`
+
+## 2. 内容系统与文章渲染（MDX）
+
+- 使用 `gray-matter` 解析 frontmatter，`markdown-to-jsx` 渲染内容。
+- 动态路由 `app/posts/[slug]`：
+  - `generateStaticParams()` 生成路径
+  - `generateMetadata()` 从文章元信息拼接 SEO
+- 目录导航（本次新增）：提取页面 `h1~h6`，为标题注入 id，侧栏生成目录并支持平滑滚动与当前高亮。
+
+![](https://images.unsplash.com/photo-1492724441997-5dc865305da7?q=80&w=1600&auto=format&fit=crop)
+
+## 3. 接入 Supabase（用户与数据）
+
+- 客户端用 `@supabase/supabase-js`，服务端用 `@supabase/ssr`。
+- 为避免 Vercel 构建期 env 缺失导致崩溃，`lib/supabase.ts` 采取“条件初始化”：缺参时返回空对象并在调用处加 `?.` 保护。
+- 登录/注册页与 `Header` 中的会话监听：`auth.getSession()` + `onAuthStateChange()`。
+
+### 排错清单
+
+- `supabaseUrl is required`：构建期读取不到 env → 条件初始化并在客户端使用可选链。
+- API Route 中 `params` 类型在 Next 15 需改为 `Promise`：`{ params }: { params: Promise<{ id: string }> }`。
+
+## 4. Vercel 部署与问题处理
+
+- GitHub 绑定仓库，Vercel 自动构建。
+- 典型构建失败：
+  - `Invalid next.config.js options: revalidate` → 路由级 ISR，不在 next.config 设置
+  - Lint: `<img>` 警告 → 页面代码改为 `next/image`（MD 内容保留原生 img）
+  - React Hooks 依赖警告 → 用 `useCallback` 包裹并补齐依赖
+
+![](https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1600&auto=format&fit=crop)
+
+## 5. 域名：Spaceship 购买与接入 Vercel
+
+- 在 Spaceship 购买 `www.leik1000.xyz`（示例）。
+- DNS 解析：
+  - 方式一（推荐）：将域名托管到 Vercel Nameservers，按提示把 NS 记录改到 Vercel 提供的服务器。
+  - 方式二：保留在 Spaceship，仅添加 A/AAAA 或 CNAME 指向 Vercel（根域常用 A，`www` 用 CNAME）。
+- Vercel 项目里添加该域名并设置默认域。
+
+## 6. UI/UX 打磨
+
+- Header 毛玻璃、滚动阴影与移动端菜单
+- 首页 Hero、卡片动效、评论区样式优化
+- 文章页阅读进度条、目录导航、代码与排版优化
+
+## 7. 线上运行后的检查清单
+
+- 环境变量在 Vercel 是否完整（含 `NEXT_PUBLIC_*` 与服务端密钥）
+- `app` 路由的动态 params 类型是否已按 Next 15 规范
+- 是否使用 `next/image` 替代页面 `<img>`（MD 内容除外）
+- Tailwind 4 语法是否统一：`@import "tailwindcss"` / `@layer`
+
+## 8. 小结
+
+这次实践把“从生成到上线”的链路全部贯通：**Cursor 生成代码 → 本地调试 → Supabase 接入 → Vercel 部署 → Spaceship 解析域名**。过程中踩到的错误都在文中给出定位与修复方式，希望能帮你更快把想法上线。
+
+如需参考源码与线上访问：
+
+- GitHub：<https://github.com/leik1000/my_blog>
+- 线上访问：<https://www.leik1000.xyz>
+
+

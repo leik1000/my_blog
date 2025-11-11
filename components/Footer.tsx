@@ -21,7 +21,7 @@ export function Footer() {
           {/* 关于博客 */}
           <div className="md:col-span-2">
             <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
-              我的博客
+              leik1000的博客
             </h3>
             <p className="text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
               分享技术见解，记录项目经验，探索创新可能。用代码改变世界，用文字传递价值。
@@ -130,7 +130,7 @@ export function Footer() {
         {/* 底部版权 */}
         <div className="flex flex-col md:flex-row items-center justify-between text-sm text-slate-600 dark:text-slate-400">
           <p className="mb-4 md:mb-0">
-            &copy; {new Date().getFullYear()} <span className="font-semibold text-slate-900 dark:text-white">我的博客</span>. 保留所有权利。
+            &copy; {new Date().getFullYear()} <span className="font-semibold text-slate-900 dark:text-white">leik1000的博客</span>. 保留所有权利。
           </p>
           <p className="flex items-center gap-1">
             用 <span className="text-red-500 animate-pulse">❤️</span> 构建 · Powered by Next.js & Supabase
