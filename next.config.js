@@ -10,8 +10,6 @@ const nextConfig = {
     ],
     unoptimized: false,
   },
-  // ISR 默认重新验证时间（秒）
-  revalidate: 3600,
 };
 
 module.exports = nextConfig;

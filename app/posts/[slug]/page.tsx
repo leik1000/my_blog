@@ -2,6 +2,7 @@ import { getPostBySlug, getAllPosts } from '@/lib/mdx';
 import { CommentForm } from '@/components/CommentForm';
 import { CommentList } from '@/components/CommentList';
 import Link from 'next/link';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 
 export const revalidate = 3600; // ISR
@@ -61,7 +62,7 @@ export default function PostPage({ params }: { params: { slug: string } }) {
       {/* 文章封面 */}
       {post.cover && (
         <div className="mb-8 rounded-lg overflow-hidden">
-          <img src={post.cover} alt={post.title} className="w-full h-96 object-cover" />
+          <Image src={post.cover} alt={post.title} width={800} height={400} className="w-full h-96 object-cover" />
         </div>
       )}
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 interface Comment {
   id: string;
@@ -19,11 +19,7 @@ export function CommentList({ post_slug, refreshTrigger }: CommentListProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    loadComments();
-  }, [post_slug, refreshTrigger]);
-
-  const loadComments = async () => {
+  const loadComments = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`/api/comments?post_slug=${encodeURIComponent(post_slug)}`);
@@ -39,7 +35,11 @@ export function CommentList({ post_slug, refreshTrigger }: CommentListProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [post_slug]);
+
+  useEffect(() => {
+    loadComments();
+  }, [post_slug, refreshTrigger, loadComments]);
 
   if (loading) {
     return <div className="text-center py-8 text-slate-600 dark:text-slate-400">加载评论中...</div>;

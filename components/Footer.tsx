@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 export function Footer() {
   return (
     <footer className="border-t dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
@@ -8,9 +10,9 @@ export function Footer() {
           <div>
             <h4 className="font-bold mb-4">导航</h4>
             <ul className="space-y-2 text-sm">
-              <li><a href="/posts" className="hover:text-blue-600">文章</a></li>
-              <li><a href="/projects" className="hover:text-blue-600">项目</a></li>
-              <li><a href="/about" className="hover:text-blue-600">关于</a></li>
+              <li><Link href="/posts" className="hover:text-blue-600">文章</Link></li>
+              <li><Link href="/projects" className="hover:text-blue-600">项目</Link></li>
+              <li><Link href="/about" className="hover:text-blue-600">关于</Link></li>
             </ul>
           </div>
           <div>

@@ -1,5 +1,6 @@
 import { getPostBySlug, getAllPosts } from '@/lib/mdx';
 import Link from 'next/link';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import path from 'path';
 
@@ -68,7 +69,7 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
       {/* 项目封面 */}
       {project.cover && (
         <div className="mb-8 rounded-lg overflow-hidden">
-          <img src={project.cover} alt={project.title} className="w-full h-96 object-cover" />
+          <Image src={project.cover} alt={project.title} width={800} height={400} className="w-full h-96 object-cover" />
         </div>
       )}
 

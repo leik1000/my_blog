@@ -18,7 +18,7 @@ export default function ImageToolPage() {
 
   useEffect(() => {
     checkAuth();
-  }, []);
+  }, [router]);
 
   const checkAuth = async () => {
     try {
