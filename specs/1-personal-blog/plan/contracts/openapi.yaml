@@ -1,0 +1,204 @@
+openapi: 3.1.0
+info:
+  title: My Blog API
+  version: 1.0.0
+  description: |
+    个人博客网站的最小后端接口（由 Vercel Serverless/Edge 代理实现）。
+    - 认证：采用 Supabase 会话（前端 SDK 登录后附带），或服务端校验 token。
+    - 评论：匿名可发（发即显），仅 admin 可删除（软删除）。
+    - 生图：登录用户可提交任务，后台代理调用 ComfyUI。
+servers:
+  - url: https://www.leik1000.xyz
+    description: Production
+  - url: http://localhost:3000
+    description: Local Dev
+security:
+  - supabaseAuth: []
+components:
+  securitySchemes:
+    supabaseAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Comment:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        post_slug: { type: string }
+        author_name: { type: string, nullable: true }
+        author_email: { type: string, nullable: true }
+        content: { type: string }
+        created_at: { type: string, format: date-time }
+      required: [id, post_slug, content, created_at]
+    CreateCommentInput:
+      type: object
+      properties:
+        post_slug: { type: string }
+        author_name: { type: string, nullable: true, maxLength: 40 }
+        author_email: { type: string, nullable: true }
+        content: { type: string, minLength: 1, maxLength: 1000 }
+      required: [post_slug, content]
+    ImageJob:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        user_id: { type: string, format: uuid }
+        prompt: { type: string }
+        negative_prompt: { type: string, nullable: true }
+        size: { type: string, enum: [512x512, 768x768, 1024x1024] }
+        steps: { type: integer, minimum: 10, maximum: 50 }
+        status: { type: string, enum: [queued, processing, succeeded, failed] }
+        result_url: { type: string, nullable: true }
+        duration_ms: { type: integer, nullable: true }
+        created_at: { type: string, format: date-time }
+      required: [id, user_id, prompt, size, steps, status, created_at]
+    CreateImageJobInput:
+      type: object
+      properties:
+        prompt: { type: string, minLength: 1, maxLength: 500 }
+        negative_prompt: { type: string, nullable: true, maxLength: 500 }
+        size: { type: string, enum: [512x512, 768x768, 1024x1024] }
+        steps: { type: integer, minimum: 10, maximum: 50 }
+      required: [prompt, size, steps]
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        code: { type: string }
+paths:
+  /api/comments:
+    get:
+      summary: 获取文章评论
+      parameters:
+        - in: query
+          name: post_slug
+          schema: { type: string }
+          required: true
+        - in: query
+          name: limit
+          schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+        - in: query
+          name: offset
+          schema: { type: integer, minimum: 0, default: 0 }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+    post:
+      summary: 发表新评论（匿名可用，发即显）
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCommentInput'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /api/comments/{id}:
+    delete:
+      summary: 删除评论（admin 权限，软删除）
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '204':
+          description: No Content
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /api/tools/image/jobs:
+    get:
+      summary: 获取本人提交的生图任务历史（需登录）
+      parameters:
+        - in: query
+          name: limit
+          schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+        - in: query
+          name: offset
+          schema: { type: integer, minimum: 0, default: 0 }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ImageJob'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+    post:
+      summary: 创建生图任务（需登录）
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateImageJobInput'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageJob'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /api/tools/image/jobs/{id}:
+    get:
+      summary: 获取单个生图任务详情（需登录且需本人或 admin）
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageJob'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+
+

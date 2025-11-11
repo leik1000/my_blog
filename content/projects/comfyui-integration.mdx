@@ -1,0 +1,61 @@
+---
+title: ComfyUI 集成与应用
+summary: 分享如何将 ComfyUI 集成到 Web 应用中并提供生图服务
+date: 2024-12-15
+tags:
+  - ComfyUI
+  - AI
+  - 项目
+pinned: true
+---
+
+# ComfyUI 集成与应用
+
+## 项目背景
+
+ComfyUI 是一个强大的图像生成工作流系统，基于 Stable Diffusion。我在这个项目中探索了如何将其集成到 Web 应用中。
+
+## 核心成果
+
+### 1. API 代理层
+- 构建安全的代理层隐藏 API 密钥
+- 实现请求转发与结果缓存
+- 添加频率限制防止滥用
+
+### 2. 前端集成
+- 开发交互式表单界面
+- 实现实时状态轮询
+- 支持结果下载与分享
+
+### 3. 用户体验优化
+- 快速反馈（2秒内给出"处理中"提示）
+- 历史记录管理
+- 错误恢复机制
+
+## 技术细节
+
+```typescript
+// 简化的代理代码
+async function generateImage(prompt: string, config: Config) {
+  const response = await fetch('https://comfyui-api.com/generate', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${process.env.COMFYUI_API_KEY}`,
+    },
+    body: JSON.stringify({ prompt, ...config }),
+  });
+  return response.json();
+}
+```
+
+## 效果
+
+- ✅ 支持多种模型与参数
+- ✅ 生成速度优化
+- ✅ 用户满意度提升
+
+## 后续计划
+
+- [ ] 支持批量生成
+- [ ] 结果质量评分
+- [ ] 模型库管理

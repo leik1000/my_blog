@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    @apply bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors;
+  }
+
+  a {
+    @apply text-blue-600 dark:text-blue-400 hover:underline;
+  }
+}
