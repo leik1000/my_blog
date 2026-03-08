@@ -11,8 +11,6 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@supabase/ssr": "^0.2.0",
-    "@supabase/supabase-js": "^2.40.0",
     "autoprefixer": "^10.4.20",
     "gray-matter": "^4.0.3",
     "markdown-to-jsx": "^7.4.0",

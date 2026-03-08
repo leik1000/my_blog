@@ -3,14 +3,9 @@ import { supabaseServer } from '@/lib/supabase';
 
 export async function POST(request: NextRequest) {
   try {
-    // 获取认证用户（使用 Cookie 中的 token）
-    const { data: { session }, error: sessionError } = await supabaseServer.auth.getSession();
-
-    if (sessionError || !session) {
-      return NextResponse.json({ error: '未授权' }, { status: 401 });
-    }
-
-    const user = session.user;
+    // 移除原有权限校验
+    // 为了防止向远程 Supabase 数据库插入缺少 user_id (外键) 的数据报错，
+    // 这里将其改为仅仅打印日志并返回模拟成功（因为我们移除了登录且不能改用户远端库结构）。
 
     // 解析请求体
     const body = await request.json();
@@ -29,29 +24,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: '尺寸无效' }, { status: 400 });
     }
 
-    // 创建任务记录
-    const { data: job, error: insertError } = await supabaseServer
-      .from('image_jobs')
-      .insert({
-        user_id: user.id,
-        prompt,
-        negative_prompt: negative_prompt || null,
-        size,
-        steps,
-        status: 'queued',
-      })
-      .select()
-      .single();
+    // 以前这里调用 Supabase 插入记录，但由于表结构强依赖 auth.users，现在跳过数据库存储。
+    console.log('[Mocked Image Job]', { prompt, negative_prompt, size, steps });
 
-    if (insertError) {
-      console.error('插入任务失败:', insertError);
-      return NextResponse.json({ error: '创建任务失败' }, { status: 500 });
-    }
+    // 模拟生成一个随机短 ID
+    const jobId = Math.random().toString(36).substring(2, 10);
 
-    // TODO: 异步调用 ComfyUI API 并更新状态
-    // 这里先返回已提交状态
-
-    return NextResponse.json({ job_id: job.id, status: 'queued' });
+    return NextResponse.json({ job_id: jobId, status: 'queued' });
   } catch (error) {
     console.error('API 错误:', error);
     return NextResponse.json({ error: '服务器错误' }, { status: 500 });

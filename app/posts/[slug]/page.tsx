@@ -1,6 +1,4 @@
 import { getPostBySlug, getAllPosts } from '@/lib/mdx';
-import { CommentForm } from '@/components/CommentForm';
-import { CommentList } from '@/components/CommentList';
 import { TableOfContents } from '@/components/TableOfContents';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -44,44 +42,54 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
         <div id="reading-progress" className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all duration-150" style={{ width: '0%' }}></div>
       </div>
 
-      <div className="container mx-auto px-4 py-12 max-w-4xl">
-        {/* 面包屑 */}
-        <nav className="mb-8 text-sm flex items-center gap-2 text-slate-600 dark:text-slate-400">
-          <Link href="/" className="hover:text-blue-600 transition">首页</Link>
+      <div className="container mx-auto px-4 py-32 max-w-7xl">
+        {/* Breadcrumb */}
+        <nav className="mb-12 text-sm flex items-center gap-2 text-slate-500 dark:text-slate-400 font-outfit">
+          <Link href="/" className="hover:text-blue-600 transition-colors">首页</Link>
           <span>/</span>
-          <Link href="/posts" className="hover:text-blue-600 transition">文章</Link>
+          <Link href="/posts" className="hover:text-blue-600 transition-colors">文章</Link>
           <span>/</span>
-          <span className="text-slate-900 dark:text-white font-medium">{post.title}</span>
+          <span className="text-slate-900 dark:text-white font-medium truncate">{post.title}</span>
         </nav>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-          {/* 主内容区 */}
-          <div className="lg:col-span-8">
-            {/* 文章头 */}
-            <header className="mb-10">
-              <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent leading-tight">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-12">
+          {/* Main Content Area */}
+          <div className="lg:col-span-8 xl:col-span-9">
+            {/* Post Header */}
+            <header className="mb-12">
+              <h1 className="text-4xl md:text-5xl lg:text-7xl font-black mb-8 font-outfit tracking-tight text-slate-900 dark:text-white leading-[1.15]">
                 {post.title}
               </h1>
-              <div className="flex flex-wrap items-center gap-4 text-sm text-slate-600 dark:text-slate-400 mb-6">
+
+              <div className="flex flex-wrap items-center gap-6 text-sm text-slate-600 dark:text-slate-400 mb-8 font-medium">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 p-[2px]">
+                    <div className="w-full h-full bg-white dark:bg-slate-900 rounded-full flex items-center justify-center">
+                      <span className="text-xs">👋</span>
+                    </div>
+                  </div>
+                  <span>leik1000</span>
+                </div>
                 <div className="flex items-center gap-2">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                   <time>{new Date(post.date).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</time>
                 </div>
                 <div className="flex items-center gap-2">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   <span>约 5 分钟阅读</span>
                 </div>
               </div>
+
               <div className="flex gap-2 flex-wrap">
                 {post.tags.map(tag => (
-                  <Link 
-                    key={tag} 
-                    href={`/posts?tag=${tag}`} 
-                    className="px-3 py-1.5 bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium hover:border-blue-500/40 transition-all hover:scale-105"
+                  <Link
+                    key={tag}
+                    href={`/posts?tag=${tag}`}
+                    className="px-4 py-1.5 bg-slate-100 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 rounded-full text-sm font-medium hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-500/10 dark:hover:text-blue-400 transition-all ring-1 ring-slate-200/50 dark:ring-slate-700/50"
                   >
                     #{tag}
                   </Link>
@@ -89,26 +97,27 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
               </div>
             </header>
 
-            {/* 文章封面 */}
+            {/* Post Cover */}
             {post.cover && (
-              <div className="mb-10 rounded-2xl overflow-hidden shadow-2xl">
-                <Image src={post.cover} alt={post.title} width={800} height={400} className="w-full h-96 object-cover" />
+              <div className="mb-14 rounded-[2rem] overflow-hidden shadow-2xl ring-1 ring-slate-200/50 dark:ring-slate-700/50 relative group">
+                <div className="absolute inset-0 bg-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-overlay z-10" />
+                <Image src={post.cover} alt={post.title} width={1200} height={600} className="w-full h-[60vh] object-cover hover:scale-105 transition-transform duration-700" priority />
               </div>
             )}
 
-            {/* 文章内容 */}
-            <article className="prose prose-lg dark:prose-invert max-w-none mb-16 prose-headings:scroll-mt-24">
+            {/* Post Content */}
+            <article className="prose prose-lg dark:prose-invert max-w-none mb-20 prose-headings:font-outfit prose-headings:font-bold prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl prose-a:text-blue-600 dark:prose-a:text-blue-400 hover:prose-a:text-blue-500 prose-img:rounded-[2rem] prose-img:shadow-2xl prose-pre:bg-slate-900 prose-pre:border prose-pre:border-slate-800">
               <Markdown
                 options={{
                   overrides: {
-                    h1: { props: { className: 'text-4xl font-bold mt-8 mb-4' } },
-                    h2: { props: { className: 'text-3xl font-bold mt-8 mb-4' } },
-                    h3: { props: { className: 'text-2xl font-bold mt-6 mb-3' } },
-                    h4: { props: { className: 'text-xl font-bold mt-4 mb-2' } },
-                    p: { props: { className: 'text-lg leading-loose mb-4' } },
-                    ul: { props: { className: 'list-disc pl-6 mb-4' } },
-                    ol: { props: { className: 'list-decimal pl-6 mb-4' } },
-                    code: { props: { className: 'bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded text-sm' } },
+                    h1: { props: { className: 'scroll-mt-32' } },
+                    h2: { props: { className: 'scroll-mt-32 border-b border-slate-200 dark:border-slate-800 pb-2' } },
+                    h3: { props: { className: 'scroll-mt-32 text-slate-800 dark:text-slate-200' } },
+                    p: { props: { className: 'leading-loose text-slate-600 dark:text-slate-400 mb-6' } },
+                    ul: { props: { className: 'list-disc pl-6 mb-6 marker:text-blue-500' } },
+                    li: { props: { className: 'text-slate-600 dark:text-slate-400' } },
+                    code: { props: { className: 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-2 py-1 rounded-lg text-sm font-semibold before:hidden after:hidden' } },
+                    blockquote: { props: { className: 'border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20 p-6 rounded-r-2xl text-slate-700 dark:text-slate-300 not-italic shadow-inner' } },
                   }
                 }}
               >
@@ -116,77 +125,51 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
               </Markdown>
             </article>
 
-            {/* 文章底部操作栏 */}
-            <div className="flex items-center justify-between p-6 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 mb-12">
-              <div className="flex gap-4">
-                <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 hover:border-blue-500 transition-all hover:scale-105">
+            {/* Action Bar */}
+            <div className="flex flex-col sm:flex-row items-center justify-between p-4 sm:p-6 glass-card rounded-3xl mb-16 gap-4">
+              <div className="flex gap-4 w-full sm:w-auto">
+                <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white/50 dark:bg-slate-800/50 hover:bg-blue-50 dark:hover:bg-blue-500/10 text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-all hover:scale-105 ring-1 ring-slate-200/50 dark:ring-slate-700/50">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                   </svg>
-                  <span className="text-sm font-medium">点赞</span>
+                  <span className="font-medium">喜欢</span>
                 </button>
-                <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 hover:border-blue-500 transition-all hover:scale-105">
+                <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white/50 dark:bg-slate-800/50 hover:bg-purple-50 dark:hover:bg-purple-500/10 text-slate-700 dark:text-slate-300 hover:text-purple-600 dark:hover:text-purple-400 transition-all hover:scale-105 ring-1 ring-slate-200/50 dark:ring-slate-700/50">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                   </svg>
-                  <span className="text-sm font-medium">收藏</span>
+                  <span className="font-medium">收藏</span>
                 </button>
               </div>
-              <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 hover:border-blue-500 transition-all hover:scale-105">
+              <button className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg hover:shadow-xl font-medium">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                 </svg>
-                <span className="text-sm font-medium">分享</span>
+                <span>分享</span>
               </button>
             </div>
-
-            {/* 分隔线 */}
-            <div className="h-px bg-gradient-to-r from-transparent via-slate-300 dark:via-slate-700 to-transparent my-12"></div>
-
-            {/* 评论区 */}
-            <section className="space-y-8">
-              <h2 className="text-3xl font-bold flex items-center gap-3">
-                <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
-                </svg>
-                评论交流
-              </h2>
-              <CommentForm post_slug={post.slug} />
-              <CommentList post_slug={post.slug} />
-            </section>
-
-            {/* 上下篇导航 */}
-            <nav className="mt-16 pt-8 border-t dark:border-slate-700 grid grid-cols-2 gap-4">
-              <Link href="#" className="group p-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 hover:border-blue-500 transition-all">
-                <div className="text-sm text-slate-500 mb-2">← 上一篇</div>
-                <div className="font-medium group-hover:text-blue-600 transition">文章标题</div>
-              </Link>
-              <Link href="#" className="group p-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 hover:border-blue-500 transition-all text-right">
-                <div className="text-sm text-slate-500 mb-2">下一篇 →</div>
-                <div className="font-medium group-hover:text-blue-600 transition">文章标题</div>
-              </Link>
-            </nav>
           </div>
 
-          {/* 侧边栏 */}
-          <aside className="lg:col-span-4 space-y-6">
-            {/* 目录 */}
+          {/* Sidebar */}
+          <aside className="lg:col-span-4 xl:col-span-3 space-y-8">
+            {/* Table of Contents */}
             <TableOfContents />
 
-            {/* 作者信息 */}
-            <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl p-6 border-2 border-blue-200/50 dark:border-blue-700/50">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-3xl">
-                  👨‍💻
+            {/* Author Profile Card */}
+            <div className="glass-card p-8 text-center relative overflow-hidden group">
+              <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-br from-blue-500/20 to-purple-500/20 opacity-50 group-hover:opacity-100 transition-opacity" />
+              <div className="relative z-10">
+                <div className="w-24 h-24 mx-auto rounded-3xl bg-white dark:bg-slate-800 p-1 shadow-xl shadow-blue-500/10 mb-6 group-hover:-translate-y-2 transition-transform duration-500 mt-6">
+                  <div className="w-full h-full rounded-3xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-4xl">
+                    👨‍💻
+                  </div>
                 </div>
-                <div>
-                  <div className="font-bold text-lg">作者</div>
-                  <div className="text-sm text-slate-600 dark:text-slate-400">全栈开发者</div>
-                </div>
+                <h3 className="text-xl font-bold font-outfit mb-2">leik1000</h3>
+                <p className="text-blue-600 dark:text-blue-400 font-medium text-sm mb-4 bg-blue-500/10 py-1.5 px-4 rounded-full inline-block">全栈开发者</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+                  专注于前端与后端技术，热爱分享与交流。用代码改变世界，探索优雅的技术方案。
+                </p>
               </div>
-              <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                专注于前端与后端技术，热爱分享与交流。
-              </p>
             </div>
           </aside>
         </div>
